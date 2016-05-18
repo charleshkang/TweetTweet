@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF5AC7081CEC495000FE3A85 /* TTTweets.m in Sources */ = {isa = PBXBuildFile; fileRef = BF5AC7071CEC495000FE3A85 /* TTTweets.m */; };
 		BF7A30921CEBA4C000782504 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7A30911CEBA4C000782504 /* main.m */; };
 		BF7A30951CEBA4C000782504 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7A30941CEBA4C000782504 /* AppDelegate.m */; };
 		BF7A309B1CEBA4C000782504 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF7A30991CEBA4C000782504 /* Main.storyboard */; };
@@ -21,6 +22,8 @@
 		4DAC6311D82B9DB23B0A2556 /* libPods-TweetTweet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TweetTweet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EB40E9BFD616E264EACD125 /* Pods-TweetTweet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TweetTweet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TweetTweet/Pods-TweetTweet.debug.xcconfig"; sourceTree = "<group>"; };
 		B202EE2DF4E7C315F03D4D30 /* Pods-TweetTweet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TweetTweet.release.xcconfig"; path = "Pods/Target Support Files/Pods-TweetTweet/Pods-TweetTweet.release.xcconfig"; sourceTree = "<group>"; };
+		BF5AC7061CEC495000FE3A85 /* TTTweets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTTweets.h; sourceTree = "<group>"; };
+		BF5AC7071CEC495000FE3A85 /* TTTweets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTweets.m; sourceTree = "<group>"; };
 		BF7A308D1CEBA4BF00782504 /* TweetTweet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TweetTweet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF7A30911CEBA4C000782504 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		BF7A30931CEBA4C000782504 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -118,6 +121,8 @@
 		BF7A30B21CEBC15E00782504 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				BF5AC7061CEC495000FE3A85 /* TTTweets.h */,
+				BF5AC7071CEC495000FE3A85 /* TTTweets.m */,
 				BF7A30AE1CEBBD7F00782504 /* TTTwitterAPIManager.h */,
 				BF7A30AF1CEBBD7F00782504 /* TTTwitterAPIManager.m */,
 			);
@@ -247,6 +252,7 @@
 			files = (
 				BF7A30951CEBA4C000782504 /* AppDelegate.m in Sources */,
 				BF7A30B01CEBBD7F00782504 /* TTTwitterAPIManager.m in Sources */,
+				BF5AC7081CEC495000FE3A85 /* TTTweets.m in Sources */,
 				BF7A30B81CEBEBEB00782504 /* TTHomeTableViewController.m in Sources */,
 				BF7A30921CEBA4C000782504 /* main.m in Sources */,
 			);

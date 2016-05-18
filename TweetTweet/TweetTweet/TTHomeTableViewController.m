@@ -74,14 +74,14 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:tweetCellIdentifier];
     }
     
-    if(indexPath.row % 2 == 0)
+    if (indexPath.row % 2 == 0)
         cell.backgroundColor = [UIColor lightGrayColor];
     else
         cell.backgroundColor = [UIColor whiteColor];
 
-    NSDictionary *tweetDictionary = self.tweetsArray[indexPath.row];
-    NSString *tweetText = [tweetDictionary objectForKey:@"text"];
-    NSDictionary *userDict = [tweetDictionary objectForKey:@"user"];
+    NSDictionary *tweetDict = self.tweetsArray[indexPath.row];
+    NSDictionary *userDict = [tweetDict objectForKey:@"user"];
+    NSString *tweetText = [tweetDict objectForKey:@"text"];
     NSString *username = [userDict objectForKey:@"name"];
     NSString *profileImage = [userDict objectForKey:@"profile_image_url"];
     
@@ -127,11 +127,10 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     [self.twitterAPI fetchTweets:@"@Peek" maxId:self.maxId successBlock:^(NSDictionary *searchData, NSArray *data) {
         
         if (firstQuery == YES) {
-            NSString *nextResults = searchData[@"next_results"];
-            NSDictionary *nextResultsDict = [self queryDictionary:nextResults];
+            
+            self.maxId = searchData[@"max_id"];
             self.tweetsArray = [[NSMutableArray alloc] init];
             [self.tweetsArray addObjectsFromArray:data];
-            self.maxId = nextResultsDict[@"max_id"];
         } else {
             
             [self.tweetsArray addObjectsFromArray:data];
@@ -144,18 +143,14 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     }];
 }
 
-
-// found this useful tutorial: https://www.codementor.io/tips/3847022513/creating-url-query-parameters-from-nsdictionary-objects-in-objectivec
-- (NSDictionary *)queryDictionary:(NSString *)parameter
+#pragma mark - Swipe to delete
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    parameter = [parameter stringByReplacingOccurrencesOfString:@"?" withString:@""];
-    NSMutableDictionary *paraDictionary = [[NSMutableDictionary alloc] init];
-    for (NSString *parameterString in [parameter componentsSeparatedByString:@"&"]) {
-        NSArray *parts = [parameterString componentsSeparatedByString:@"="];
-        if([parts count] < 2) continue;
-        [paraDictionary setObject:[parts objectAtIndex:1] forKey:[parts objectAtIndex:0]];
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
+        [self.tweetsArray removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
-    return paraDictionary;
 }
 
 #pragma mark - Refresh and Infinite Scrolling
@@ -188,21 +183,11 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     
     [self.tableView addInfiniteScrollWithHandler:^(UITableView *tableView) {
         [weakSelf searchTwitterWithQueries:NO completion:^{
-            [self.homeTableView finishInfiniteScrollWithCompletion:^(id scrollView) {
+            [weakSelf.homeTableView finishInfiniteScrollWithCompletion:^(id scrollView) {
                 [scrollView stopAnimating];
             }];
         }];
     }];
-}
-
-#pragma mark - Swipe to delete
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete)
-    {
-        [self.tweetsArray removeObjectAtIndex:indexPath.row];
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }
 }
 
 @end
