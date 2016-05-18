@@ -23,8 +23,8 @@
 
 - (void)fetchTweets:(NSString *)query
               maxId:(NSString *)maxId
-       successBlock:(void(^)(NSDictionary *searchData, NSArray *statuses))successBlock
-         errorBlock:(void(^)(NSError *error))errorBlock
+       successBlock:(void (^)(NSDictionary *searchData, NSArray *statuses))successBlock
+         errorBlock:(void (^)(NSError *error))errorBlock
 {
  [self.twitterAPI getSearchTweetsWithQuery:query
                                    geocode:nil

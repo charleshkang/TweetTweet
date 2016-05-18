@@ -35,7 +35,7 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     [self refreshTweets];
     [self setupInfiniteScrolling];
     
-    self.navigationItem.title = @"Tweet Tweet";
+    self.navigationItem.title = @"TweetTweet Feed";
 }
 
 #pragma mark - Tableview Methods
@@ -45,11 +45,11 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     self.homeTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     self.homeTableView.dataSource = self;
     self.homeTableView.delegate = self;
-    self.homeTableView.frame = CGRectMake(10,30,80,80);
+    self.homeTableView.frame = CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height);
     
     self.homeTableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     [self.homeTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"tweetCellIdentifier"];
-    [self.homeTableView reloadData];
+    [self.tableView reloadData];
     [self.view addSubview:self.homeTableView];
 }
 
@@ -65,13 +65,20 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.homeTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:tweetCellIdentifier];
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:tweetCellIdentifier];
     
     UITableViewCell *cell = [self.homeTableView dequeueReusableCellWithIdentifier:tweetCellIdentifier];
+
+    
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:tweetCellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:tweetCellIdentifier];
     }
     
+    if(indexPath.row % 2 == 0)
+        cell.backgroundColor = [UIColor lightGrayColor];
+    else
+        cell.backgroundColor = [UIColor whiteColor];
+
     NSDictionary *tweetDictionary = self.tweetsArray[indexPath.row];
     NSString *tweetText = [tweetDictionary objectForKey:@"text"];
     NSDictionary *userDict = [tweetDictionary objectForKey:@"user"];
@@ -80,21 +87,22 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     
     cell.textLabel.numberOfLines = 0;
     cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    
+    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
     cell.textLabel.text = tweetText;
-    cell.detailTextLabel.text = [NSString stringWithFormat:@" by %@", username];
+    
+    cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tweet by: %@", username];
     
     NSURL *url = [NSURL URLWithString: profileImage];
     NSData *data = [NSData dataWithContentsOfURL:url];
     cell.imageView.image = [[UIImage alloc] initWithData:data];
     
-    [cell setNeedsUpdateConstraints];
-    
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    tableView.estimatedRowHeight = 100;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    tableView.estimatedRowHeight = 70.0;
     return tableView.rowHeight = UITableViewAutomaticDimension;
 }
 
@@ -111,6 +119,8 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
         NSLog(@"Error: %@", error);
     }];
 }
+
+#pragma mark - Twitter Query Implementation
 
 - (void)searchTwitterWithQueries:(BOOL)firstQuery completion: (void(^)(void))completion
 {
@@ -134,6 +144,8 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     }];
 }
 
+
+// found this useful tutorial: https://www.codementor.io/tips/3847022513/creating-url-query-parameters-from-nsdictionary-objects-in-objectivec
 - (NSDictionary *)queryDictionary:(NSString *)parameter
 {
     parameter = [parameter stringByReplacingOccurrencesOfString:@"?" withString:@""];
@@ -146,6 +158,7 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     return paraDictionary;
 }
 
+#pragma mark - Refresh and Infinite Scrolling
 - (void)refreshTweets
 {
     self.refreshControl = [[UIRefreshControl alloc] init];
@@ -159,14 +172,6 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
 - (void)reloadData {
     [self.tableView reloadData];
     if (self.refreshControl) {
-        
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"MMM d, h:mm a"];
-        NSString *title = [NSString stringWithFormat:@"Last update: %@", [dateFormatter stringFromDate:[NSDate date]]];
-        NSDictionary *colorDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
-                                                                    forKey:NSForegroundColorAttributeName];
-        NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:colorDictionary];
-        self.refreshControl.attributedTitle = attributedTitle;
         
         [self.tweetsArray removeAllObjects];
         [self.tableView reloadData];
@@ -187,8 +192,17 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
                 [scrollView stopAnimating];
             }];
         }];
-        
     }];
+}
+
+#pragma mark - Swipe to delete
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
+        [self.tweetsArray removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }
 }
 
 @end
