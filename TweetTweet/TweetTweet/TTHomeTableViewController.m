@@ -45,7 +45,7 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     self.homeTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     self.homeTableView.dataSource = self;
     self.homeTableView.delegate = self;
-    self.homeTableView.frame = CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height);
+    self.homeTableView.frame = CGRectMake(0,0,0,0);
     
     self.homeTableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     [self.homeTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"tweetCellIdentifier"];
@@ -111,7 +111,7 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
 - (void)setUpTwitter
 {
     self.twitterAPI = [TTTwitterAPIManager queryTwitterWithConsumerKey:clientId consumerSecret:clientSecret completion:^(NSString *userId, NSString *username) {
-        NSLog(@"Login Successful");
+        NSLog(@"Authentication Successful");
         [self searchTwitterWithQueries:YES completion:nil];
         [self.homeTableView reloadData];
         

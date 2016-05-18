@@ -158,7 +158,6 @@
 				TargetAttributes = {
 					BF7A308C1CEBA4BF00782504 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = FP79X83Q3E;
 					};
 				};
 			};
@@ -362,6 +361,7 @@
 			baseConfigurationReference = 7EB40E9BFD616E264EACD125 /* Pods-TweetTweet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = TweetTweet/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.charleshkang.TweetTweet;
@@ -374,6 +374,7 @@
 			baseConfigurationReference = B202EE2DF4E7C315F03D4D30 /* Pods-TweetTweet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = TweetTweet/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.charleshkang.TweetTweet;
