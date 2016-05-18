@@ -188,7 +188,7 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     
     [self.tableView addInfiniteScrollWithHandler:^(UITableView *tableView) {
         [weakSelf searchTwitterWithQueries:NO completion:^{
-            [self.homeTableView finishInfiniteScrollWithCompletion:^(id scrollView) {
+            [weakSelf.homeTableView finishInfiniteScrollWithCompletion:^(id scrollView) {
                 [scrollView stopAnimating];
             }];
         }];
