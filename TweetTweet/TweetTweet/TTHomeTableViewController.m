@@ -17,8 +17,9 @@
 
 @property (nonatomic) UITableView *homeTableView;
 
-@property (strong,nonatomic) NSMutableArray *titleArray;
-@property (strong,nonatomic) NSMutableArray *bodyArray;
+@property (nonatomic) NSMutableArray<TTTweets *> *tweetsArray;
+@property (nonatomic) TTTwitterAPIManager *twitterAPI;
+@property (nonatomic) NSString *maxId;
 
 @end
 
@@ -26,18 +27,18 @@
 
 static NSString *const clientId = @"0FgDEtuBA7uzji1rj0hiEUVJ2";
 static NSString *const clientSecret = @"uNNLTO8RITEUK3Gz4ed7hlHKAQzZUWjxK9m7vassLCehDXGGdl";
-static NSString *tweetCellIdentifier = @"customCellIdentifier";
+static NSString *tweetCellIdentifier = @"customTweetCellIdentifier";
+
+#pragma mark - Lifecycle Methods
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self setupTableView];
     [self setUpTwitter];
-    [self refreshTweets];
-    [self setupInfiniteScrolling];
     
     UINib *nib = [UINib nibWithNibName:@"TTCustomCell" bundle:nil];
-    [self.tableView registerNib:nib forCellReuseIdentifier:@"customCellIdentifier"];
+    [self.homeTableView registerNib:nib forCellReuseIdentifier:tweetCellIdentifier];
     
     self.navigationItem.title = @"TweetTweet Feed";
 }
@@ -49,12 +50,10 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     self.homeTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     self.homeTableView.dataSource = self;
     self.homeTableView.delegate = self;
-    self.homeTableView.frame = CGRectMake(0,0,0,0);
+    self.homeTableView.frame = CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height);
     
-    self.homeTableView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    [self.homeTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"tweetCellIdentifier"];
-    [self.tableView reloadData];
     [self.view addSubview:self.homeTableView];
+    [self setupRefreshControl];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -69,35 +68,20 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *tweetDict = self.tweetsArray[indexPath.row];
-    NSDictionary *userDict = [tweetDict objectForKey:@"user"];
-    NSString *tweetText = [tweetDict objectForKey:@"text"];
-    NSString *username = [userDict objectForKey:@"name"];
-    NSString *profileImage = [userDict objectForKey:@"profile_image_url"];
-    
-    [self.tableView registerClass:[TTCustomTableViewCell class] forCellReuseIdentifier:tweetCellIdentifier];
-    
     TTCustomTableViewCell *cell = (TTCustomTableViewCell *)[tableView dequeueReusableCellWithIdentifier:tweetCellIdentifier];
     
-//    cell.textLabel.numberOfLines = 0;
-//    cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-//    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
-//    cell.textLabel.text = tweetText;
-//    
-//    cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
-//    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tweet by: %@", username];
-//    
-    NSURL *url = [NSURL URLWithString: profileImage];
-    NSData *data = [NSData dataWithContentsOfURL:url];
-//    cell.imageView.image = [[UIImage alloc] initWithData:data];
-    
     if (cell == nil) {
-        cell = [[TTCustomTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:tweetCellIdentifier];
+        NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"TTCustomCell" owner:self options:nil];
+        cell = [nib objectAtIndex:0];
     }
     
-    cell.usernameLabel.text = username;
-    cell.userProfileImage.image = [[UIImage alloc] initWithData:data];
-    cell.tweetLabel.text = tweetText;
+    TTTweets *tweet = self.tweetsArray[indexPath.row];
+    cell.usernameLabel.text = [NSString stringWithFormat:@"Tweeted by: %@", tweet.userName];
+    cell.tweetLabel.text = tweet.tweetText;
+    
+    [tweet getProfileImagesFromTwitterData:^(UIImage *image) {
+        cell.userProfileImage.image = image;
+    }];
     
     if (indexPath.row % 2 == 0)
         cell.backgroundColor = [UIColor lightGrayColor];
@@ -109,6 +93,7 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    tableView.estimatedRowHeight = 80;
     return tableView.rowHeight = UITableViewAutomaticDimension;
 }
 
@@ -132,17 +117,16 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
 {
     [self.twitterAPI fetchTweets:@"@Peek" maxId:self.maxId successBlock:^(NSDictionary *searchData, NSArray *data) {
         
-        if (firstQuery == YES) {
-            
-            self.maxId = searchData[@"max_id"];
-            self.tweetsArray = [[NSMutableArray alloc] init];
-            [self.tweetsArray addObjectsFromArray:data];
-        } else {
-            
-            [self.tweetsArray addObjectsFromArray:data];
+        if (!self.tweetsArray) {
+            self.tweetsArray = [NSMutableArray new];
         }
+        if (firstQuery == YES) {
+            self.tweetsArray = [NSMutableArray arrayWithArray:[TTTweets twitterDataFromJSON:data]];
+            self.maxId = searchData[@"max_id"];
+        }
+        
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
+            [self.homeTableView reloadData];
         });
     } errorBlock:^(NSError *error) {
         NSLog(@"Error: %@", error);
@@ -156,27 +140,26 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     {
         [self.tweetsArray removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [self.homeTableView reloadData];
     }
 }
 
 #pragma mark - Refresh and Infinite Scrolling
-- (void)refreshTweets
+- (void)setupRefreshControl
 {
     self.refreshControl = [[UIRefreshControl alloc] init];
     self.refreshControl.backgroundColor = [UIColor clearColor];
     
     [self.refreshControl addTarget:self
-                            action:@selector(reloadData)
+                            action:@selector(reloadData:)
                   forControlEvents:UIControlEventValueChanged];
 }
 
-- (void)reloadData {
-    [self.tableView reloadData];
-    if (self.refreshControl) {
-        
-        [self.tweetsArray removeAllObjects];
-        [self.tableView reloadData];
+- (void)reloadData:(UIRefreshControl *)control
+{
+    if (control) {
         [self searchTwitterWithQueries:YES completion:nil];
+        [self.homeTableView reloadData];
         [self.refreshControl endRefreshing];
     }
 }
@@ -187,13 +170,20 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     
     self.homeTableView.infiniteScrollIndicatorStyle = UIActivityIndicatorViewStyleWhite;
     
-    [self.tableView addInfiniteScrollWithHandler:^(UITableView *tableView) {
-        [weakSelf searchTwitterWithQueries:NO completion:^{
-            [weakSelf.homeTableView finishInfiniteScrollWithCompletion:^(id scrollView) {
-                [scrollView stopAnimating];
-            }];
+    [self.homeTableView addInfiniteScrollWithHandler:^(UITableView *tableView) {
+        
+        [weakSelf searchTwitterWithQueries:YES completion:^{
+            [tableView finishInfiniteScroll];
         }];
+        
     }];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if(self.homeTableView.contentOffset.y >= (self.homeTableView.contentSize.height - self.homeTableView.frame.size.height)) {
+        [self setupInfiniteScrolling];
+    }
 }
 
 @end

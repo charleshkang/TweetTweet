@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface TTTweets : NSObject
 
@@ -15,8 +16,9 @@
 
 @property (nonatomic) NSString *tweetText;
 @property (nonatomic) NSString *userName;
-@property (nonatomic) NSString *userProfileImage;
+@property (nonatomic) NSString *userProfileImageURL;
 
-+ (NSArray<TTTweets *> *)twitterDataFromJSON:(NSDictionary *)json;
++ (NSArray<TTTweets *> *)twitterDataFromJSON:(NSArray *)json;
+- (void)getProfileImagesFromTwitterData:(void(^)(UIImage *image))completion;
 
 @end

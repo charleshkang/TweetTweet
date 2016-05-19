@@ -8,13 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "TTTwitterAPIManager.h"
+#import "TTTweets.h"
 
 @interface TTHomeTableViewController : UITableViewController
-
-@property (nonatomic) TTTwitterAPIManager *twitterAPI;
-@property (nonatomic) STTwitterAPI *twitter;
-
-@property (nonatomic) NSMutableArray *tweetsArray;
-@property (nonatomic) NSString *maxId;
 
 @end

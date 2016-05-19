@@ -21,28 +21,48 @@
         self.userDict = userDict;
         self.tweetText = tweetText;
         self.userName = userName;
-        self.userProfileImage = userProfileImage;
+        self.userProfileImageURL = userProfileImage;
     }
     return self;
 }
 
-+ (NSArray<TTTweets *> *)twitterDataFromJSON:(NSDictionary *)json
++ (NSArray<TTTweets *> *)twitterDataFromJSON:(NSArray *)json
 {
     NSMutableArray<TTTweets *> *tweetsDataArray = [NSMutableArray new];
     
     if (json)
     {
-        
-        NSString *tweetText = json[@"text"];
-        
-        NSDictionary *userDict = json[@"user"];
-        NSString *userName = userDict[@"name"];
-        NSString *userProfileImage = userDict[@"profile_image_url"];
-        
-        TTTweets *allTweets = [[TTTweets alloc] initWithUserDict:userDict tweetText:tweetText userName:userName userProfileImage:userProfileImage];
-        [tweetsDataArray addObject:allTweets];
+        for (NSDictionary *data in json) {
+            
+            NSString *tweetText = data[@"text"];
+            NSDictionary *userDict = data[@"user"];
+            NSString *userName = userDict[@"name"];
+            NSString *userProfileImage = userDict[@"profile_image_url"];
+            
+            TTTweets *allTweets = [[TTTweets alloc] initWithUserDict:userDict tweetText:tweetText userName:userName userProfileImage:userProfileImage];
+            [tweetsDataArray addObject:allTweets];
+        }
     }
     return tweetsDataArray;
+}
+
+- (void)getProfileImagesFromTwitterData:(void(^)(UIImage *image))completion
+{
+    if (!self.userProfileImageURL) {
+        return;
+    }
+    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        
+        NSURL *url = [NSURL URLWithString:self.userProfileImageURL];
+        NSData *imageData = [NSData dataWithContentsOfURL:url];
+        
+        UIImage *img = [UIImage imageWithData:imageData];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(img);
+        });
+    });
 }
 
 @end
