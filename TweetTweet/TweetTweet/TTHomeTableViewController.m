@@ -81,6 +81,10 @@ static NSString *tweetCellIdentifier = @"customTweetCellIdentifier";
     
     [tweet getProfileImagesFromTwitterData:^(UIImage *image) {
         cell.userProfileImage.image = image;
+        cell.userProfileImage.layer.cornerRadius = cell.userProfileImage.frame.size.width / 2;
+        cell.userProfileImage.clipsToBounds = YES;
+        cell.userProfileImage.layer.borderWidth = 3.0f;
+        cell.userProfileImage.layer.borderColor = [UIColor blackColor].CGColor;
     }];
     
     if (indexPath.row % 2 == 0)
