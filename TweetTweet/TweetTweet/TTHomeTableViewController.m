@@ -48,6 +48,9 @@ static NSString *tweetCellIdentifier = @"customTweetCellIdentifier";
 - (void)setupTableView
 {
     self.homeTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    self.homeTableView.rowHeight = UITableViewAutomaticDimension;
+    self.homeTableView.estimatedRowHeight = 100.0;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.homeTableView.dataSource = self;
     self.homeTableView.delegate = self;
     self.homeTableView.frame = CGRectMake(0,0,self.view.frame.size.width,self.view.frame.size.height);
@@ -93,12 +96,6 @@ static NSString *tweetCellIdentifier = @"customTweetCellIdentifier";
         cell.backgroundColor = [UIColor whiteColor];
     
     return cell;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    tableView.estimatedRowHeight = 80;
-    return tableView.rowHeight = UITableViewAutomaticDimension;
 }
 
 #pragma mark - Twitter API Implementation
