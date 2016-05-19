@@ -15,6 +15,8 @@
 		BF7A30A01CEBA4C000782504 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF7A309E1CEBA4C000782504 /* LaunchScreen.storyboard */; };
 		BF7A30B01CEBBD7F00782504 /* TTTwitterAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7A30AF1CEBBD7F00782504 /* TTTwitterAPIManager.m */; };
 		BF7A30B81CEBEBEB00782504 /* TTHomeTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF7A30B71CEBEBEB00782504 /* TTHomeTableViewController.m */; };
+		BFCD2CA51CEE290000ECDCF6 /* TTCustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BFCD2CA41CEE290000ECDCF6 /* TTCustomCell.xib */; };
+		BFCD2CA81CEE2A3B00ECDCF6 /* TTCustomTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BFCD2CA71CEE2A3B00ECDCF6 /* TTCustomTableViewCell.m */; };
 		F74932A280C3FAE26B008025 /* libPods-TweetTweet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DAC6311D82B9DB23B0A2556 /* libPods-TweetTweet.a */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +38,9 @@
 		BF7A30AF1CEBBD7F00782504 /* TTTwitterAPIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTTwitterAPIManager.m; sourceTree = "<group>"; };
 		BF7A30B61CEBEBEB00782504 /* TTHomeTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTHomeTableViewController.h; sourceTree = "<group>"; };
 		BF7A30B71CEBEBEB00782504 /* TTHomeTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTHomeTableViewController.m; sourceTree = "<group>"; };
+		BFCD2CA41CEE290000ECDCF6 /* TTCustomCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TTCustomCell.xib; sourceTree = "<group>"; };
+		BFCD2CA61CEE2A3B00ECDCF6 /* TTCustomTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTCustomTableViewCell.h; sourceTree = "<group>"; };
+		BFCD2CA71CEE2A3B00ECDCF6 /* TTCustomTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTCustomTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +119,9 @@
 			children = (
 				BF7A30B61CEBEBEB00782504 /* TTHomeTableViewController.h */,
 				BF7A30B71CEBEBEB00782504 /* TTHomeTableViewController.m */,
+				BFCD2CA41CEE290000ECDCF6 /* TTCustomCell.xib */,
+				BFCD2CA61CEE2A3B00ECDCF6 /* TTCustomTableViewCell.h */,
+				BFCD2CA71CEE2A3B00ECDCF6 /* TTCustomTableViewCell.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -189,6 +197,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFCD2CA51CEE290000ECDCF6 /* TTCustomCell.xib in Resources */,
 				BF7A30A01CEBA4C000782504 /* LaunchScreen.storyboard in Resources */,
 				BF7A309D1CEBA4C000782504 /* Assets.xcassets in Resources */,
 				BF7A309B1CEBA4C000782504 /* Main.storyboard in Resources */,
@@ -250,6 +259,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFCD2CA81CEE2A3B00ECDCF6 /* TTCustomTableViewCell.m in Sources */,
 				BF7A30951CEBA4C000782504 /* AppDelegate.m in Sources */,
 				BF7A30B01CEBBD7F00782504 /* TTTwitterAPIManager.m in Sources */,
 				BF5AC7081CEC495000FE3A85 /* TTTweets.m in Sources */,

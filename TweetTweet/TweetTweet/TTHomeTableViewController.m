@@ -10,6 +10,7 @@
 #import <UIScrollView+InfiniteScroll.h>
 
 #import "TTHomeTableViewController.h"
+#import "TTCustomTableViewCell.h"
 #import "TTTwitterAPIManager.h"
 
 @interface TTHomeTableViewController ()
@@ -34,6 +35,9 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
     [self setUpTwitter];
     [self refreshTweets];
     [self setupInfiniteScrolling];
+    
+    UINib *nib = [UINib nibWithNibName:@"TTCustomCell" bundle:nil];
+    [self.tableView registerNib:nib forCellReuseIdentifier:@"customCellIdentifier"];
     
     self.navigationItem.title = @"TweetTweet Feed";
 }
@@ -65,44 +69,46 @@ static NSString *tweetCellIdentifier = @"customCellIdentifier";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:tweetCellIdentifier];
-    
-    UITableViewCell *cell = [self.homeTableView dequeueReusableCellWithIdentifier:tweetCellIdentifier];
-
-    
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:tweetCellIdentifier];
-    }
-    
-    if (indexPath.row % 2 == 0)
-        cell.backgroundColor = [UIColor lightGrayColor];
-    else
-        cell.backgroundColor = [UIColor whiteColor];
-
     NSDictionary *tweetDict = self.tweetsArray[indexPath.row];
     NSDictionary *userDict = [tweetDict objectForKey:@"user"];
     NSString *tweetText = [tweetDict objectForKey:@"text"];
     NSString *username = [userDict objectForKey:@"name"];
     NSString *profileImage = [userDict objectForKey:@"profile_image_url"];
     
-    cell.textLabel.numberOfLines = 0;
-    cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
-    cell.textLabel.text = tweetText;
+    [self.tableView registerClass:[TTCustomTableViewCell class] forCellReuseIdentifier:tweetCellIdentifier];
     
-    cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tweet by: %@", username];
+    TTCustomTableViewCell *cell = (TTCustomTableViewCell *)[tableView dequeueReusableCellWithIdentifier:tweetCellIdentifier];
     
+//    cell.textLabel.numberOfLines = 0;
+//    cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+//    cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
+//    cell.textLabel.text = tweetText;
+//    
+//    cell.detailTextLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:11.0f];
+//    cell.detailTextLabel.text = [NSString stringWithFormat:@"Tweet by: %@", username];
+//    
     NSURL *url = [NSURL URLWithString: profileImage];
     NSData *data = [NSData dataWithContentsOfURL:url];
-    cell.imageView.image = [[UIImage alloc] initWithData:data];
+//    cell.imageView.image = [[UIImage alloc] initWithData:data];
+    
+    if (cell == nil) {
+        cell = [[TTCustomTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:tweetCellIdentifier];
+    }
+    
+    cell.usernameLabel.text = username;
+    cell.userProfileImage.image = [[UIImage alloc] initWithData:data];
+    cell.tweetLabel.text = tweetText;
+    
+    if (indexPath.row % 2 == 0)
+        cell.backgroundColor = [UIColor lightGrayColor];
+    else
+        cell.backgroundColor = [UIColor whiteColor];
     
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    tableView.estimatedRowHeight = 70.0;
     return tableView.rowHeight = UITableViewAutomaticDimension;
 }
 
