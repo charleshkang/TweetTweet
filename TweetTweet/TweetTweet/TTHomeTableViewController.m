@@ -127,7 +127,7 @@ static NSString *tweetCellIdentifier = @"customTweetCellIdentifier";
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.homeTableView reloadData];
+            completion();
         });
     } errorBlock:^(NSError *error) {
         NSLog(@"Error: %@", error);
@@ -159,9 +159,14 @@ static NSString *tweetCellIdentifier = @"customTweetCellIdentifier";
 - (void)reloadData:(UIRefreshControl *)control
 {
     if (control) {
-        [self searchTwitterWithQueries:YES completion:nil];
-        [self.homeTableView reloadData];
-        [self.refreshControl endRefreshing];
+        
+        [self searchTwitterWithQueries:YES completion:^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+                [self.refreshControl endRefreshing];
+            });
+        }
+         ];
     }
 }
 
